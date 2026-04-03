@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Shadow Fight - QA Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #0f172a;
+            touch-action: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        #root {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .game-ui { 
+            position: absolute; 
+            inset: 0; 
+            pointer-events: none; 
+            z-index: 100; 
+        }
+        
+        .back-btn { 
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            pointer-events: auto; 
+            padding: 10px 20px; 
+            background: rgba(15,23,42,0.8); 
+            border: 1px solid #1e293b; 
+            color: white; 
+            border-radius: 8px; 
+            text-decoration: none; 
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .back-btn:hover, .back-btn:active { 
+            background: #6366f1; 
+        }
+        
+        .instructions { 
+            position: absolute; 
+            bottom: 30px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: rgba(15,23,42,0.8); 
+            border: 1px solid #6366f1; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            color: white; 
+            font-family: monospace; 
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        .modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #1e293b; padding: 40px; border-radius: 12px;
+            width: 90%; max-width: 500px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            pointer-events: auto;
+            color: #fff; border: 1px solid #334155;
+        }
+        
+        @media (max-width: 768px) {
+            .back-btn {
+                top: 10px;
+                left: 10px;
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            
+            .instructions {
+                bottom: 180px;
+                padding: 8px 16px;
+                font-size: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .back-btn {
+                top: 8px;
+                left: 8px;
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+            
+            .instructions {
+                bottom: 160px;
+                padding: 6px 12px;
+                font-size: 9px;
+            }
+        }
+    </style>
+  <script type="module" crossorigin src="./assets/game-zucC-sEY.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime-DuroZq-O.js">
+  <link rel="modulepreload" crossorigin href="./assets/vendor-react-BFy3wT2X.js">
+  <link rel="stylesheet" crossorigin href="./assets/style-VORa9HsL.css">
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>
