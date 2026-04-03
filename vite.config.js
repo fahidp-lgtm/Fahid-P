@@ -13,7 +13,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        game: resolve(__dirname, 'game.html')
+        game: resolve(__dirname, 'game.html'),
+        admin: resolve(__dirname, 'admin.html')
       },
       output: {
         entryFileNames: '[name]-[hash].js',
