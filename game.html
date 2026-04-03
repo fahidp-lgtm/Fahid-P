@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Shadow Fight - QA Portfolio</title>
@@ -23,7 +23,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            background: #0f172a;
+            background: #0a0508;
             touch-action: none;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -34,17 +34,18 @@
             width: 100%;
             height: 100%;
             position: relative;
+            overflow: hidden;
         }
         
         .game-ui { 
-            position: absolute; 
+            position: fixed; 
             inset: 0; 
             pointer-events: none; 
-            z-index: 100; 
+            z-index: 10; 
         }
         
         .back-btn { 
-            position: absolute; 
+            position: fixed; 
             top: 20px; 
             left: 20px; 
             pointer-events: auto; 
@@ -57,6 +58,8 @@
             font-weight: bold;
             font-size: 14px;
             transition: background 0.2s;
+            z-index: 100;
+            touch-action: manipulation;
         }
         
         .back-btn:hover, .back-btn:active { 
@@ -64,7 +67,7 @@
         }
         
         .instructions { 
-            position: absolute; 
+            position: fixed; 
             bottom: 30px; 
             left: 50%; 
             transform: translateX(-50%); 
@@ -76,45 +79,7 @@
             font-family: monospace; 
             font-size: 12px;
             white-space: nowrap;
-        }
-        
-        .modal {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #1e293b; padding: 40px; border-radius: 12px;
-            width: 90%; max-width: 500px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            pointer-events: auto;
-            color: #fff; border: 1px solid #334155;
-        }
-        
-        @media (max-width: 768px) {
-            .back-btn {
-                top: 10px;
-                left: 10px;
-                padding: 8px 16px;
-                font-size: 12px;
-            }
-            
-            .instructions {
-                bottom: 180px;
-                padding: 8px 16px;
-                font-size: 10px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .back-btn {
-                top: 8px;
-                left: 8px;
-                padding: 6px 12px;
-                font-size: 11px;
-            }
-            
-            .instructions {
-                bottom: 160px;
-                padding: 6px 12px;
-                font-size: 9px;
-            }
+            z-index: 100;
         }
     </style>
 </head>

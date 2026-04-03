@@ -2,7 +2,9 @@
 node_modules/
 
 # Build output
-dist/
+# DO NOT IGNORE dist - it's needed for deployment
+# dist/
+
 *.local
 
 # Environment files
@@ -35,3 +37,7 @@ coverage/
 # Misc
 *.tgz
 *.tar.gz
+
+# Git
+.git/
+.gitignore
