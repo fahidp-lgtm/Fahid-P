@@ -16,6 +16,9 @@ export default defineConfig({
         game: resolve(__dirname, 'game.html')
       },
       output: {
+        entryFileNames: '[name]-[hash].js',
+        chunkFileNames: '[name]-[hash].js',
+        assetFileNames: '[name]-[hash][extname]',
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
             if (id.includes('react')) return 'vendor-react';
