@@ -10,11 +10,17 @@ export default function App() {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768 || 'ontouchstart' in window);
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth <= 768;
+      setIsMobile(isTouchDevice || isSmallScreen);
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener('orientationchange', checkMobile);
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('orientationchange', checkMobile);
+    };
   }, []);
 
   return (
@@ -105,12 +111,29 @@ export default function App() {
                 top: 0,
                 left: 0,
                 right: 0,
-                padding: 'clamp(15px, 3vw, 25px) clamp(20px, 5vw, 50px)',
+                padding: isMobile ? '10px' : 'clamp(15px, 3vw, 25px) clamp(20px, 5vw, 50px)',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'flex-start'
             }}>
-               <div style={{ width: '42%' }}>
+               {isMobile && (
+                 <a href="index.html" style={{
+                     position: 'absolute',
+                     top: '10px',
+                     left: '10px',
+                     padding: '8px 16px',
+                     background: 'rgba(0,0,0,0.7)',
+                     border: '1px solid rgba(255,255,255,0.2)',
+                     color: 'white',
+                     borderRadius: '8px',
+                     textDecoration: 'none',
+                     fontSize: '12px',
+                     fontWeight: 'bold',
+                     zIndex: 1001,
+                     touchAction: 'manipulation'
+                 }}>← Back</a>
+               )}
+               <div style={{ width: isMobile ? '35%' : '42%', marginTop: isMobile ? '35px' : '0' }}>
                    <div style={{ 
                        display: 'flex', 
                        alignItems: 'center', 
@@ -152,9 +175,10 @@ export default function App() {
                </div>
 
                <div style={{ 
-                   width: '42%', 
-                   textAlign: 'right' 
-               }}>
+                    width: isMobile ? '35%' : '42%', 
+                    textAlign: 'right',
+                    marginTop: isMobile ? '35px' : '0'
+                }}>
                    <div style={{ 
                        color: '#e8e8e8', 
                        marginBottom: '10px', 
@@ -236,14 +260,15 @@ export default function App() {
                 position: 'absolute', 
                 top: '50%', 
                 left:'50%', 
-                transform:'translate(-50%, -50%)', 
+                transform: isMobile ? 'translate(-50%, -50%) scale(0.9)' : 'translate(-50%, -50%)', 
                 background:'rgba(8, 3, 5, 0.96)',
-                padding: 'clamp(30px, 8vw, 70px) clamp(40px, 10vw, 120px)', 
+                padding: isMobile ? '20px 25px' : 'clamp(30px, 8vw, 70px) clamp(40px, 10vw, 120px)', 
                 textAlign:'center', 
                 pointerEvents: 'auto',
                 border: '2px solid #5a2a2a',
                 boxShadow: '0 0 80px rgba(0,0,0,0.9), inset 0 0 50px rgba(100,40,60,0.15)',
-                maxWidth: '90vw'
+                maxWidth: isMobile ? '85vw' : '90vw',
+                zIndex: 1002
             }}>
                 <div style={{
                     position: 'absolute',

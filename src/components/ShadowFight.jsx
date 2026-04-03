@@ -1,10 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { useStore } from '../store';
 import { Fighter, FloatingText, Spark, SlashTrail } from '../game/classes';
 
 export default function ShadowFight({ started, isMobile }) {
     const canvasRef = useRef(null);
-    const [touchControls, setTouchControls] = useState({
+    const touchControlsRef = useRef({
         left: false,
         right: false,
         up: false,
@@ -17,23 +17,31 @@ export default function ShadowFight({ started, isMobile }) {
     });
 
     useEffect(() => {
-        if (started) {
-            const tryInit = () => {
-                if (window.AudioContext || window.webkitAudioContext) {
-                    // Audio ready
-                }
-            };
-            tryInit();
-        }
-    }, [started]);
-
-    useEffect(() => {
         if (!started) return;
 
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        
+        const updateCanvasSize = () => {
+            const dpr = window.devicePixelRatio || 1;
+            const displayWidth = window.innerWidth;
+            const displayHeight = window.innerHeight;
+            
+            canvas.width = displayWidth * dpr;
+            canvas.height = displayHeight * dpr;
+            canvas.style.width = displayWidth + 'px';
+            canvas.style.height = displayHeight + 'px';
+            
+            ctx.scale(dpr, dpr);
+            
+            return { width: displayWidth, height: displayHeight };
+        };
+        
+        const { width: canvasWidth, height: canvasHeight } = updateCanvasSize();
+        
+        window.addEventListener('resize', () => {
+            updateCanvasSize();
+        });
 
         const gravity = 0.5;
         let animationId;
@@ -48,13 +56,13 @@ export default function ShadowFight({ started, isMobile }) {
         const level = useStore.getState().level;
         let aiTickRate = level === 1 ? 900 : level === 2 ? 650 : 400;
 
-        const GROUND_Y = canvas.height - 50;
-        const ARENA_WIDTH = canvas.width * 0.85;
-        const ARENA_LEFT = (canvas.width - ARENA_WIDTH) / 2;
+        const GROUND_Y = canvasHeight - 50;
+        const ARENA_WIDTH = canvasWidth * 0.85;
+        const ARENA_LEFT = (canvasWidth - ARENA_WIDTH) / 2;
         const ARENA_RIGHT = ARENA_LEFT + ARENA_WIDTH;
 
         const player = new Fighter({
-            position: { x: canvas.width * 0.3, y: 0 },
+            position: { x: canvasWidth * 0.3, y: 0 },
             velocity: { x: 0, y: 0 },
             color: '#1a1a1a',
             facingRight: true,
@@ -62,7 +70,7 @@ export default function ShadowFight({ started, isMobile }) {
         });
 
         const enemy = new Fighter({
-            position: { x: canvas.width * 0.7, y: 0 },
+            position: { x: canvasWidth * 0.7, y: 0 },
             velocity: { x: 0, y: 0 },
             color: '#1a1a1a',
             facingRight: false,
@@ -71,8 +79,8 @@ export default function ShadowFight({ started, isMobile }) {
 
         for (let i = 0; i < 25; i++) {
             ambientParticles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
+                x: Math.random() * canvasWidth,
+                y: Math.random() * canvasHeight,
                 size: 1 + Math.random() * 2,
                 speed: 0.2 + Math.random() * 0.4,
                 opacity: 0.1 + Math.random() * 0.2,
@@ -230,8 +238,8 @@ export default function ShadowFight({ started, isMobile }) {
         }, aiTickRate);
 
         function drawBackground() {
-            const w = canvas.width;
-            const h = canvas.height;
+            const w = canvasWidth;
+            const h = canvasHeight;
 
             const skyGradient = ctx.createLinearGradient(0, 0, 0, h * 0.7);
             skyGradient.addColorStop(0, '#1a0a2e');
@@ -333,8 +341,8 @@ export default function ShadowFight({ started, isMobile }) {
                 p.y -= p.speed;
                 p.x += p.drift + Math.sin(p.y * 0.01) * 0.3;
                 if (p.y < -10) {
-                    p.y = canvas.height + 10;
-                    p.x = Math.random() * canvas.width;
+                    p.y = canvasHeight + 10;
+                    p.x = Math.random() * canvasWidth;
                 }
             });
         }
@@ -350,13 +358,13 @@ export default function ShadowFight({ started, isMobile }) {
 
         function drawVignette() {
             const gradient = ctx.createRadialGradient(
-                canvas.width / 2, canvas.height / 2, canvas.height * 0.3,
-                canvas.width / 2, canvas.height / 2, canvas.height
+                canvasWidth / 2, canvasHeight / 2, canvasHeight * 0.3,
+                canvasWidth / 2, canvasHeight / 2, canvasHeight
             );
             gradient.addColorStop(0, 'rgba(0,0,0,0)');
             gradient.addColorStop(1, 'rgba(0,0,0,0.5)');
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         }
 
         function animate() {
@@ -382,8 +390,8 @@ export default function ShadowFight({ started, isMobile }) {
                 player.draw(ctx);
                 enemy.draw(ctx);
             } else {
-                player.update(ctx, canvas.height, gravity);
-                enemy.update(ctx, canvas.height, gravity);
+                player.update(ctx, canvasHeight, gravity);
+                enemy.update(ctx, canvasHeight, gravity);
             }
 
             const playerLeft = player.position.x;
@@ -408,7 +416,7 @@ export default function ShadowFight({ started, isMobile }) {
                 }
             }
 
-            const tc = touchControls;
+            const tc = touchControlsRef.current;
             keys.a.pressed = tc.left;
             keys.d.pressed = tc.right;
             keys.s.pressed = tc.down;
@@ -426,18 +434,22 @@ export default function ShadowFight({ started, isMobile }) {
                 } else {
                     player.attack('light_slash');
                 }
+                tc.attack = false;
             }
 
             if (tc.heavy) {
                 player.attack('heavy_slash');
+                tc.heavy = false;
             }
 
             if (tc.leftSlash && !player.isAirborne) {
                 player.attack('left_slash');
+                tc.leftSlash = false;
             }
 
             if (tc.rightSlash) {
                 player.attack('right_slash');
+                tc.rightSlash = false;
             }
 
             player.isBlocking = keys.shift.pressed && player.stunFrames === 0 && player.attackState === 'idle';
@@ -536,90 +548,109 @@ export default function ShadowFight({ started, isMobile }) {
             window.cancelAnimationFrame(animationId);
             window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('keyup', handleKeyUp);
+            window.removeEventListener('resize', updateCanvasSize);
             clearInterval(aiInterval);
         };
-    }, [started, useStore.getState().level, touchControls]);
+    }, [started, useStore.getState().level]);
 
-    const handleTouchStart = (control) => (e) => {
+    const handleTouchStart = useCallback((control) => (e) => {
         e.preventDefault();
-        setTouchControls(prev => ({ ...prev, [control]: true }));
-    };
+        e.stopPropagation();
+        touchControlsRef.current[control] = true;
+    }, []);
 
-    const handleTouchEnd = (control) => (e) => {
+    const handleTouchEnd = useCallback((control) => (e) => {
         e.preventDefault();
-        setTouchControls(prev => ({ ...prev, [control]: false }));
-    };
+        e.stopPropagation();
+        touchControlsRef.current[control] = false;
+    }, []);
 
     return (
         <>
             <canvas
                 ref={canvasRef}
-                style={{ display: 'block', width: '100%', height: '100%' }}
+                style={{ display: 'block', width: '100%', height: '100%', touchAction: 'none' }}
             />
             {isMobile && started && (
                 <div className="game-touch-controls visible" style={{ pointerEvents: 'auto' }}>
+                    <div className="touch-actions-row2">
+                        <button
+                            className="touch-action-btn-small left-slash"
+                            onTouchStart={handleTouchStart('leftSlash')}
+                            onTouchEnd={handleTouchEnd('leftSlash')}
+                        >
+                            L<br/>LEFT
+                        </button>
+                        <button
+                            className="touch-action-btn-small right-slash"
+                            onTouchStart={handleTouchStart('rightSlash')}
+                            onTouchEnd={handleTouchEnd('rightSlash')}
+                        >
+                            I<br/>RIGHT
+                        </button>
+                    </div>
                     <div className="touch-dpad">
                         <button
-                            className={`touch-dpad-btn up ${touchControls.up ? 'active' : ''}`}
+                            className="touch-dpad-btn up"
                             onTouchStart={handleTouchStart('up')}
                             onTouchEnd={handleTouchEnd('up')}
                         >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                                 <path d="M18 15l-6-6-6 6"/>
                             </svg>
                         </button>
                         <button
-                            className={`touch-dpad-btn down ${touchControls.down ? 'active' : ''}`}
+                            className="touch-dpad-btn down"
                             onTouchStart={handleTouchStart('down')}
                             onTouchEnd={handleTouchEnd('down')}
                         >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                                 <path d="M6 9l6 6 6-6"/>
                             </svg>
                         </button>
                         <button
-                            className={`touch-dpad-btn left ${touchControls.left ? 'active' : ''}`}
+                            className="touch-dpad-btn left"
                             onTouchStart={handleTouchStart('left')}
                             onTouchEnd={handleTouchEnd('left')}
                         >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                                 <path d="M15 18l-6-6 6-6"/>
                             </svg>
                         </button>
                         <button
-                            className={`touch-dpad-btn right ${touchControls.right ? 'active' : ''}`}
+                            className="touch-dpad-btn right"
                             onTouchStart={handleTouchStart('right')}
                             onTouchEnd={handleTouchEnd('right')}
                         >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                                 <path d="M9 18l6-6-6-6"/>
                             </svg>
                         </button>
                     </div>
                     <div className="touch-actions">
                         <button
-                            className={`touch-action-btn jump ${touchControls.up ? 'active' : ''}`}
+                            className="touch-action-btn jump"
                             onTouchStart={handleTouchStart('up')}
                             onTouchEnd={handleTouchEnd('up')}
                         >
                             JUMP
                         </button>
                         <button
-                            className={`touch-action-btn attack ${touchControls.attack ? 'active' : ''}`}
+                            className="touch-action-btn attack"
                             onTouchStart={handleTouchStart('attack')}
                             onTouchEnd={handleTouchEnd('attack')}
                         >
                             J<br/>ATK
                         </button>
                         <button
-                            className={`touch-action-btn heavy ${touchControls.heavy ? 'active' : ''}`}
+                            className="touch-action-btn heavy"
                             onTouchStart={handleTouchStart('heavy')}
                             onTouchEnd={handleTouchEnd('heavy')}
                         >
                             K<br/>HEAVY
                         </button>
                         <button
-                            className={`touch-action-btn block ${touchControls.block ? 'active' : ''}`}
+                            className="touch-action-btn block"
                             onTouchStart={handleTouchStart('block')}
                             onTouchEnd={handleTouchEnd('block')}
                         >

@@ -1738,10 +1738,10 @@ ul {
 .game-touch-controls {
     display: none;
     position: fixed;
-    bottom: 20px;
+    bottom: 0;
     left: 0;
     right: 0;
-    padding: 0 15px;
+    padding: 15px;
     z-index: 1001;
     pointer-events: none;
 }
@@ -1752,20 +1752,20 @@ ul {
 
 .touch-dpad {
     position: absolute;
-    left: 20px;
-    bottom: 20px;
-    width: 140px;
-    height: 140px;
+    left: 15px;
+    bottom: 15px;
+    width: 150px;
+    height: 150px;
     pointer-events: auto;
 }
 
 .touch-dpad-btn {
     position: absolute;
-    width: 50px;
-    height: 50px;
-    background: rgba(99, 102, 241, 0.6);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 12px;
+    width: 56px;
+    height: 56px;
+    background: rgba(99, 102, 241, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1774,12 +1774,15 @@ ul {
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 .touch-dpad-btn:active,
 .touch-dpad-btn.active {
-    background: rgba(99, 102, 241, 0.9);
-    transform: scale(0.95);
+    background: rgba(99, 102, 241, 0.95);
+    transform: scale(0.92);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .touch-dpad-btn.up {
@@ -1808,48 +1811,51 @@ ul {
 
 .touch-dpad-btn.up:active,
 .touch-dpad-btn.up.active {
-    transform: translateX(-50%) scale(0.95);
+    transform: translateX(-50%) scale(0.92);
 }
 
 .touch-dpad-btn.left:active,
 .touch-dpad-btn.left.active {
-    transform: translateY(-50%) scale(0.95);
+    transform: translateY(-50%) scale(0.92);
 }
 
 .touch-dpad-btn.right:active,
 .touch-dpad-btn.right.active {
-    transform: translateY(-50%) scale(0.95);
+    transform: translateY(-50%) scale(0.92);
 }
 
 .touch-actions {
     position: absolute;
-    right: 20px;
-    bottom: 20px;
+    right: 10px;
+    bottom: 10px;
     display: flex;
-    gap: 12px;
+    gap: 10px;
     pointer-events: auto;
 }
 
 .touch-action-btn {
-    width: 65px;
-    height: 65px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: white;
     text-transform: uppercase;
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    -webkit-tap-highlight-color: transparent;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 .touch-action-btn:active,
 .touch-action-btn.active {
-    transform: scale(0.9);
+    transform: scale(0.88);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .touch-action-btn.attack {
@@ -1866,6 +1872,47 @@ ul {
 
 .touch-action-btn.jump {
     background: linear-gradient(135deg, #10b981, #059669);
+}
+
+/* Extra row for special attacks */
+.touch-actions-row2 {
+    position: absolute;
+    right: 15px;
+    bottom: 95px;
+    display: flex;
+    gap: 10px;
+    pointer-events: auto;
+}
+
+.touch-action-btn-small {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.touch-action-btn-small:active {
+    transform: scale(0.88);
+}
+
+.touch-action-btn-small.left-slash {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.touch-action-btn-small.right-slash {
+    background: linear-gradient(135deg, #ec4899, #db2777);
 }
 
 /* Responsive QA Game Section */
